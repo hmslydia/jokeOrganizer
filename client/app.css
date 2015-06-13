@@ -1,0 +1,50 @@
+.headline-container{
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.voice-container{
+  padding: 10px;
+}
+
+.voice-comment{ 
+  padding-bottom: 5px;
+}
+
+.add-voice-comment{
+  width: 300px;
+}
+
+#query-bar{
+  width: 300px;
+}
+
+.highlightTerm{
+  color:red;
+}
+
+#queryFeedbackContainer{
+  border: 1px solid black;
+  padding: 5px;
+}
+
+#articleDiv{
+  height: 600px;
+  overflow-y: auto;
+}
+
+.hide-voices{
+  display: none;
+}
+
+.voices-div{
+  /*display: none;*/
+}
+
+.desaturated{
+  opacity: 0.5;
+}
+
+.has-likerts-true{  
+  opacity: 0.5;
+}

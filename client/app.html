@@ -1,0 +1,265 @@
+<template name='home'>
+   <div class='container'>
+    <div class="row">
+      <div class="col-md-2">
+        {{> sidebar}}
+      </div>
+      <div class="col-md-10">
+        {{> queryFeedback}}
+        {{> articleDiv}}
+      </div>      
+      
+    </div>
+  </div>
+</template>
+
+<template name="queryFeedback">
+  <div class="row">
+    <div class="col-md-8">
+      <div id="queryFeedbackContainer">
+        {{queryFeedbackText}}
+      </div>
+    </div>
+  </div>
+</template>
+
+<template name="articleDiv">
+  <div id="articleDiv">
+  {{#each articles}}
+    {{> article}}
+    <br>
+  {{/each}}
+  </div>
+</template>
+
+<template name="article">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="headline-container">
+        {{{headline}}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      {{{description}}}<br>
+    </div>
+    <div class="col-md-4">
+      {{#each headline_tags}}
+        <div class="headline-tag">
+          {{tag}}
+        </div>
+      {{/each}}
+
+      {{#each headline_comments}}
+        <div class="headline-comment">
+          {{{text}}}
+        </div>
+      {{/each}}
+      <textarea class="add-headline-comment add-voice-comment" data-field="headline"></textarea>
+      <button class="addComment" data-field="headline">+</button>
+    </div>
+  </div>
+
+  
+  <div class="voices-div" >
+    <!-- 
+    
+      VOICE 1
+      
+    -->
+    {{#if equals voice1_show "true"}}
+    <div class="row">
+      <div class="col-md-4">
+        <div class="voice-container">
+          {{{voice1}}}
+        </div>
+      </div>
+      <div class="col-md-8">
+        
+         {{#each voice1_likerts}}
+          <div class="voice1-tag">
+            {{answer}}  <button class="remove-likert"> X </button>
+          </div>
+        {{/each}}
+        <div class="two-story-vote has-likerts-{{hasLikert}}">
+          Two-Stories:
+          <button class="vote-button" data-answer="yes" data-voice="voice1">Yes</button>
+          <button class="vote-button" data-answer="kinda" data-voice="voice1">Kinda</button>
+          <button class="vote-button" data-answer="no" data-voice="voice1">No   </button>
+        </div>
+        
+        <!--
+        {{#each voice1_tags}}
+          <div class="voice1-tag">
+            {{tag}}
+          </div>
+        {{/each}}
+        -->
+        
+        {{#each voice1_comments}}
+          <div class='voice1-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
+            {{{text}}}
+          </div>
+        {{/each}}
+        <textarea class="add-voice1-comment add-voice-comment" data-field="voice1"></textarea>
+        <button class="addComment" data-field="voice1">+</button>
+      </div>
+    </div>
+    {{/if}}
+  
+    <!-- 
+      
+      VOICE 2
+      
+    -->  
+    {{#if equals voice2_show "true"}}
+    <div class="row">
+      <div class="col-md-4">
+          <div class="voice-container">
+            {{{voice2}}}
+          </div>
+      </div>
+      <div class="col-md-8">
+        {{#each voice2_likerts}}
+          <div class="voice2-tag">
+            {{answer}}<br>
+          </div>
+        {{/each}}
+        <div class="two-story-vote has-likerts-{{hasLikert}}">
+          Two-Stories:
+          <button class="vote-button" data-answer="yes" data-voice="voice2">Yes</button>
+          <button class="vote-button" data-answer="kinda" data-voice="voice2">Kinda</button>
+          <button class="vote-button" data-answer="no" data-voice="voice2">No   </button>
+        </div>
+        <!--
+        {{#each voice2_tags}}
+          <div class="voice2-tag">
+            {{tag}}
+          </div>
+        {{/each}}
+        -->
+        {{#each voice2_comments}}
+          <div class='voice2-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
+            {{{text}}}
+          </div>
+        {{/each}}
+        <textarea class="add-voice2-comment add-voice-comment" data-field="voice2"></textarea>
+        <button class="addComment" data-field="voice2">+</button>
+      </div>
+    </div>
+    
+    {{/if}}
+  
+    <!-- 
+      
+      VOICE 3
+      
+    -->  
+    {{#if equals voice3_show "true"}} 
+    <div class="row">
+      <div class="col-md-4">
+          <div class="voice-container">
+            {{{voice3}}}
+          </div>
+      </div>
+      <div class="col-md-8">
+        {{#each voice3_likerts}}
+          <div class="voice3-tag">
+            {{answer}}
+          </div>
+        {{/each}}
+        <div class="two-story-vote has-likerts-{{hasLikert}}">
+          Two-Stories:
+          <button class="vote-button" data-answer="yes" data-voice="voice3">Yes</button>
+          <button class="vote-button" data-answer="kinda" data-voice="voice3">Kinda</button>
+          <button class="vote-button" data-answer="no" data-voice="voice3">No   </button>
+        </div>
+        <!--
+        
+        {{#each voice3_tags}}
+          <div class="voice3-tag">
+            {{tag}}
+          </div>
+        {{/each}}
+        -->
+        {{#each voice3_comments}}
+          <div class='voice3-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
+            {{{text}}}
+          </div>
+        {{/each}}
+        <textarea class="add-voice3-comment add-voice-comment" data-field="voice3"></textarea>
+        <button class="addComment" data-field="voice3">+</button>
+      </div>
+  
+    </div>
+    {{/if}}
+  </div>
+  <button class="show-voices">Show voices</button>
+  <button class="hide-voices" >Hide voices</button>
+  
+</template>
+
+
+
+
+<template name="voice">
+  <div class="row">
+    <div class="col-md-8">
+      <div class="headline-container">
+        {{{headline}}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      {{{description}}}<br>
+    </div>
+    <div class="col-md-4">
+      {{#each headline_comments}}
+        <div class="headline-comment">
+          {{{text}}}
+        </div>
+      {{/each}}
+      <textarea class="add-headline-comment add-voice-comment" data-field="headline"></textarea>
+      <button class="addComment" data-field="headline">+</button>
+    </div>
+  </div>
+
+  
+  <div class="voices-div" >
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="voice-container">
+          {{{voice1}}}
+        </div>
+      </div>
+      <div class="col-md-8">
+         {{#each voice1_likerts}}
+          <div class="voice1-tag">
+            {{answer}}<br>
+          </div>
+        {{/each}}
+        <div class="two-story-vote has-likerts-{{hasLikert}}">
+          Two-Stories:
+          <button class="vote-button" data-answer="yes" data-voice="voice1">Yes</button>
+          <button class="vote-button" data-answer="kinda" data-voice="voice1">Kinda</button>
+          <button class="vote-button" data-answer="no" data-voice="voice1">No   </button>
+        </div>
+        
+        {{#each voice1_comments}}
+          <div class='voice1-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
+            {{{text}}}
+          </div>
+        {{/each}}
+        <textarea class="add-voice1-comment add-voice-comment" data-field="voice1"></textarea>
+        <button class="addComment" data-field="voice1">+</button>
+      </div>
+    </div>
+  
+  
+  </div>
+
+  
+</template>

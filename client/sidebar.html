@@ -1,0 +1,13 @@
+<template name="sidebar">
+  {{> goals}}
+  <br>
+  {{#each tags}}
+    {{> tag}}
+  {{/each}}
+</template>
+
+<template name="tag">
+  <div class="sidebar-tag">
+    {{tag}} ({{count}})
+  </div>
+</template>

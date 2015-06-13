@@ -1,0 +1,21 @@
+<template name="goals">
+  <!-- {{> insultGoal}} -->
+  {{> twoStoryGoal}}
+</template>
+
+<template name="insultGoal">
+Goal: Mark every joke for insult ({{tally.numTotal}})<br>
+<button id="insultGoalYes">Insult ({{tally.numYes}})</button><br>
+<button id="insultGoalNo">Not Insult ({{tally.numNo}})</button><br>
+<button id="insultGoalUnsure">Unsure ({{tally.numUnsure}})</button><br>
+</template>
+
+
+
+<template name="twoStoryGoal">
+Goal: Mark every joke for two stories ({{tally.numTotal}})<br>
+<button id="twoStoryGoalYes">Yes ({{tally.numYes}})</button><br>
+<button id="twoStoryGoalKinda">Kinda ({{tally.numKinda}})</button><br>
+<button id="twoStoryGoalNo">No ({{tally.numNo}})</button><br>
+<button id="twoStoryGoalNotDone">Not Done ({{tally.numNotDone}})</button><br>
+</template>
