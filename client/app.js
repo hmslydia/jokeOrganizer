@@ -72,7 +72,7 @@ Template.articleDiv.helpers({
       var regex = new RegExp(queryText, "i")
       
       //find a unique set of article ids, with comments that match the regex
-      var commentsMatchingRegex = Comments.find({text: regex}).fetch()
+      var commentsMatchingRegex = Comments.find({text: regex, removed: false}).fetch()
       var articleIds = _.unique(_.pluck(commentsMatchingRegex, "article_id"))
       //also, get which voices they belong to. 
       
@@ -136,9 +136,7 @@ Template.articleDiv.helpers({
         }else{
           selectedArticleVoices[article_id] = ["voice3"] 
         }        
-      })   
-      console.log("selectedArticleVoices")
-      console.log(selectedArticleVoices)   
+      })     
       
     } else if (queryType == "goal"){
       if(queryGoalType == "insult"){
@@ -210,12 +208,7 @@ Template.articleDiv.helpers({
           ]}
         }
         
-        
-
-        
         var voicesObjs = Voices.find(query).fetch()
-        console.log(voicesObjs)
-        console.log("voicesObjs")
         var article_id_set = _.pluck(voicesObjs, "article_id")
         
         var articleIds = _.unique(article_id_set)
@@ -242,7 +235,7 @@ Template.articleDiv.helpers({
       var article_id = articleObj._id
       
       //ADD COMMENTS TO ARTICLES
-      var articleComments = Comments.find({article_id: article_id}).fetch() 
+      var articleComments = Comments.find({article_id: article_id, removed: false}).fetch() 
       if(queryType == "text"){
         articleComments =      highlightSearchTermInComments(articleComments, queryText)
       }
@@ -254,7 +247,7 @@ Template.articleDiv.helpers({
       
       
       //ADD LIKERTS
-      var articleLikerts = LikertApplications.find({article_id: article_id}).fetch() 
+      var articleLikerts = LikertApplications.find({article_id: article_id, removed: false}).fetch() 
       articleObj.voice1_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice1"})
       articleObj.voice2_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice2"})
       articleObj.voice3_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice3"})
@@ -395,19 +388,20 @@ Template.article.events({
     })
   },
   
-  'click .remove-likert' : function(event){
-    console.log(this)
-    /*
-    var params = {
-      article_id: article_id,
-      field: voice, //"voice1"
-      label: label, //"two-stories"
-      answer: answer //"yes"        
-    }
+  'click .remove-likert' : function(event){        
+    var params = this
     Meteor.call("removeLikert", params, function(){
       //no callback
     })
-    */
+    
+  },
+  
+  'click .remove-comment' : function(event){
+    console.log(this)
+    var params = this
+    Meteor.call("removeComment", params, function(){
+      //no callback
+    })
   }
 })
 

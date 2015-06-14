@@ -99,7 +99,7 @@
         
         {{#each voice1_comments}}
           <div class='voice1-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
-            {{{text}}}
+            {{{text}}} <button class="remove-comment"> X </button>
           </div>
         {{/each}}
         <textarea class="add-voice1-comment add-voice-comment" data-field="voice1"></textarea>
@@ -123,7 +123,7 @@
       <div class="col-md-8">
         {{#each voice2_likerts}}
           <div class="voice2-tag">
-            {{answer}}<br>
+            {{answer}} <button class="remove-likert"> X </button>
           </div>
         {{/each}}
         <div class="two-story-vote has-likerts-{{hasLikert}}">
@@ -141,7 +141,8 @@
         -->
         {{#each voice2_comments}}
           <div class='voice2-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
-            {{{text}}}
+            
+            {{{text}}}<button class="remove-comment"> X </button>
           </div>
         {{/each}}
         <textarea class="add-voice2-comment add-voice-comment" data-field="voice2"></textarea>
@@ -166,7 +167,7 @@
       <div class="col-md-8">
         {{#each voice3_likerts}}
           <div class="voice3-tag">
-            {{answer}}
+            {{answer}} <button class="remove-likert"> X </button>
           </div>
         {{/each}}
         <div class="two-story-vote has-likerts-{{hasLikert}}">
@@ -185,7 +186,7 @@
         -->
         {{#each voice3_comments}}
           <div class='voice3-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
-            {{{text}}}
+            {{{text}}} <button class="remove-comment"> X </button>
           </div>
         {{/each}}
         <textarea class="add-voice3-comment add-voice-comment" data-field="voice3"></textarea>

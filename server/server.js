@@ -5,6 +5,12 @@ Meteor.methods({
     addCommentOrTag(params) 
     
   },
+  removeComment: function(params){
+    params.time = getTime()
+    params.user_id = Meteor.userId() || null //Session.get('userId') || null
+    removeComment(params) 
+    
+  },
   addLikert: function(params){
     console.log('addlikert')
     params.time = getTime()
@@ -58,7 +64,43 @@ addCommentOrTag = function(params){
     Comments.insert(params)
   }
   */
+  params.removed = false
   Comments.insert(params)
+}
+
+removeComment = function(params){
+  var id = params._id
+  Comments.update(
+    {_id: id},
+    {$set:
+      {
+        removed: true,
+        removed_user: params.user_id,
+        removed_time: params.time
+      }
+      
+    }
+  )
+  /*
+  var text = params.text
+  if(text[0] == "#"){
+    var spaceIndex = text.indexOf(" ")
+    var tagText = text.substring(0, spaceIndex)
+    if( spaceIndex == -1 ){
+      tagText = text
+    }
+    
+    
+    var addTagAppParams = {
+      user_id: params.user_id,
+      time: params.time,
+      article_id: params.article_id,
+      field: params.field,
+      tag: tagText
+    }
+    addTagApplication(addTagAppParams)
+    */
+  //}
 }
 
 addLikert = function(params){
@@ -73,9 +115,11 @@ addLikert = function(params){
   answer: "yes","no","kinda" //"very funny! point of view?" 
   label: "Two-tone"   
   
+  removed: false
   */
 
   //Update Log (all actions)
+  params.removed = false
   LikertApplications.insert(params)
   
 
@@ -126,7 +170,65 @@ addLikert = function(params){
 }
 
 removeLikert = function(params){
+  // mark as removed in LikertApplications
+  var id = params._id
+  LikertApplications.update(
+    {_id: id},
+    {$set:
+      {
+        removed: true,
+        removed_user: params.user_id,
+        removed_time: params.time
+      }
+      
+    }
+  )
   
+
+  //UPDATE the individual likert counts for each voice.  
+  var voiceObj =  Voices.findOne({article_id: params.article_id, voice_number: params.field})
+  
+  var is_first_yes = false
+  var is_first_no = false
+  var is_first_kinda = false
+  
+  
+  var inc1 = {}
+  if (params.answer == "yes"){
+    //right here I could check if the current count is zero
+    is_first_yes = (voiceObj.likert_two_stories_counts.yes == 1) 
+    inc1["likert_two_stories_counts.yes"] = -1
+  }
+  if (params.answer == "no"){
+    is_first_no = (voiceObj.likert_two_stories_counts.no == 1) 
+    inc1["likert_two_stories_counts.no"] = -1
+  }
+  if (params.answer == "kinda"){
+    is_first_kinda = (voiceObj.likert_two_stories_counts.kinda == 1) 
+    inc1["likert_two_stories_counts.kinda"] = -1
+  }
+
+  Voices.update(
+    {article_id: params.article_id, voice_number: params.field},
+    {$inc: inc1}
+    )
+  
+  //UPDATE the overall likert counts for the goal
+  var inc2 = {}
+  if (is_first_yes){
+    inc2["count_yes"] = -1
+  }
+  if (is_first_no){
+    inc2["count_no"] = -1
+  }
+  if (is_first_kinda){
+    inc2["count_kinda"] = -1
+  }
+  Likerts.update(
+    {label: "two-stories"}, 
+      {$inc: inc2 }
+  )
+
 }
 
 addTag = function(tag){

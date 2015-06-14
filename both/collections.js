@@ -38,6 +38,10 @@ field: field, //headline, description, voice1, voice2, voice3
 
 text: text //"very funny! point of view?" 
 saturation: full or mid     
+
+removed: false / true
+removed_user_id:
+removed_time: 
 */
 
 
@@ -106,6 +110,9 @@ field: field, //headline, description, voice1, voice2, voice3
 answer: "yes","no","kinda" //"very funny! point of view?" 
 label: "Two-tone"   
 
+removed: false / true
+removed_user_id:
+removed_time: 
 */
 
 
