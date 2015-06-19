@@ -24,7 +24,21 @@ description:
 voice:
 voice_number: //1, 2, or 3
 likert_two_stories_counts.: {yes: 0, no:0, kinda:0}
+
 */
+
+TagCountsByObject = new Meteor.Collection('tagCountsByObject')
+/*
+//these are uniquely identiied by an article_id, field, and tag_id (or tag)  
+id:
+article_id:
+field: headline, voice1, voice2
+
+tag:
+tag_id:
+counts:  
+  
+*/  
 
 
 Comments = new Meteor.Collection("comments");
@@ -65,6 +79,10 @@ article_id: article_id,
 field: field, //headline, description, voice1, voice2, voice3
 tag_id: 
 tag:
+
+removed: false / true
+removed_user_id:
+removed_time:
 */
 
 
@@ -78,11 +96,7 @@ This can be used to display the goal progress
 
 3. LikertApplications is a log of all the activity - each likert that is entered, by whom, what time, etc.  
 
-What policies do I need to explain here?
-INSERT?
-UPDATE?
-   UNDO?????
-  */
+*/
 
 //This stories all the likerts at the highest level, and their counts
 Likerts = new Meteor.Collection("likerts"); 

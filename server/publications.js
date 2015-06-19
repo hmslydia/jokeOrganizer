@@ -21,6 +21,9 @@ Meteor.publish('tagApplications', function(){
   return TagApplications.find()
 })
 
+Meteor.publish('tagCountsByObject', function(){
+  return TagCountsByObject.find()
+})
 
 
 Meteor.publish('likerts', function(){

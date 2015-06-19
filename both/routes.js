@@ -11,6 +11,7 @@ Router.map(function(){
               Meteor.subscribe('voices'),
               Meteor.subscribe('likerts'),
               Meteor.subscribe('tags'),
+              Meteor.subscribe('tagCountsByObject'),
               Meteor.subscribe('tagApplications'),
               Meteor.subscribe('likertApplications')]
     },
