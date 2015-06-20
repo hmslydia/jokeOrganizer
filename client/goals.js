@@ -114,10 +114,68 @@ Template.twoStoryGoal.events({
   },
   
   'click #twoStoryGoalNotDone': function(event){
-    console.log('coick not done')
     query("goal", 
       {
         queryGoalType: "likert-two-stories",
+        queryGoalSubtype: "notDone"
+      }
+   )
+   }
+})
+
+Template.entityMatchGoal.helpers({
+  tally : function(){
+    var goal = Likerts.findOne({label:"entityMatch"})
+    
+    var numYes = goal.count_yes
+    var numNo = goal.count_no    
+    var numKinda = goal.count_kinda
+    
+    //THIS IS ACTUALLY WRONG. JUST AN ESTIMATE
+    // It is only correct if 
+    var numTotal = Voices.find().count()
+    var numNotDone = numTotal - (numYes + numNo + numKinda)
+    
+    return {
+        //numTotal: numTotal, 
+        numYes: numYes,
+        numKinda: numKinda,
+        numNo: numNo,
+        numNotDone: numNotDone,
+    }    
+  }
+})
+
+Template.entityMatchGoal.events({
+  'click #entityMatchGoalYes': function(event){
+    query("goal", 
+      {
+        queryGoalType: "likert-entityMatch",
+        queryGoalSubtype: "yes"
+      }
+    )
+  },
+  'click #entityMatchGoalNo': function(event){
+    query("goal",
+      {
+        queryGoalType: "likert-entityMatch",
+        queryGoalSubtype: "no"
+      }
+    )
+  },
+  'click #entityMatchGoalKinda': function(event){
+    query("goal", 
+      {
+        queryGoalType: "likert-entityMatch",
+        queryGoalSubtype: "kinda"
+      }
+    )
+  },
+  
+  'click #entityMatchGoalNotDone': function(event){
+    query("goal", 
+      {
+        queryGoalType: "likert-entityMatch",
         queryGoalSubtype: "notDone"
       }
    )

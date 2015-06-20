@@ -1,6 +1,7 @@
 <template name="goals">
   <!-- {{> insultGoal}} -->
   {{> twoStoryGoal}}
+  {{> entityMatchGoal}}
 </template>
 
 <template name="insultGoal">
@@ -18,4 +19,13 @@ Goal: Mark every joke for two stories ({{tally.numTotal}})<br>
 <button id="twoStoryGoalKinda">Kinda ({{tally.numKinda}})</button><br>
 <button id="twoStoryGoalNo">No ({{tally.numNo}})</button><br>
 <button id="twoStoryGoalNotDone">Not Done ({{tally.numNotDone}})</button><br>
+</template>
+
+
+<template name="entityMatchGoal">
+Goal: Mark every joke for entityMatching ({{tally.numTotal}})<br>
+<button id="entityMatchGoalYes">Yes ({{tally.numYes}})</button><br>
+<button id="entityMatchGoalKinda">Kinda ({{tally.numKinda}})</button><br>
+<button id="entityMatchGoalNo">No ({{tally.numNo}})</button><br>
+<button id="entityMatchGoalNotDone">Not Done ({{tally.numNotDone}})</button><br>
 </template>

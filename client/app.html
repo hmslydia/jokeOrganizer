@@ -32,6 +32,73 @@
   </div>
 </template>
 
+<template name="likertView1">
+  <div class="likertView">
+    {{#each voice1_likerts}}
+      <div class="voice1-tag">
+        {{answer}}  <button class="remove-likert"> X </button>
+      </div>
+    {{/each}}
+    
+    <div class="two-story-vote has-likerts-{{voice1_hasLikert}}">
+      {{label}}:
+      <button class="vote-likert" data-answer="yes" data-voice="voice1">Yes</button>
+      <button class="vote-likert" data-answer="kinda" data-voice="voice1">Kinda</button>
+      <button class="vote-likert" data-answer="no" data-voice="voice1">No   </button>
+    </div>
+  </div>
+</template>
+
+<template name="likertView2">
+  <div class="likertView">
+    {{#each voice2_likerts}}
+      <div class="voice2-tag">
+        {{answer}}  <button class="remove-likert"> X </button>
+      </div>
+    {{/each}}
+    
+    <div class="two-story-vote has-likerts-{{voice2_hasLikert}}">
+      {{label}}:
+      <button class="vote-likert" data-answer="yes" data-voice="voice2" >Yes</button>
+      <button class="vote-likert" data-answer="kinda" data-voice="voice2">Kinda</button>
+      <button class="vote-likert" data-answer="no" data-voice="voice2">No   </button>
+    </div>
+  </div>
+</template>
+
+<template name="likertView3">
+  <div class="likertView">
+   {{#each voice3_likerts}}
+    <div class="voice3-tag">
+      {{answer}}  <button class="remove-likert"> X </button>
+    </div>
+  {{/each}}
+  
+  <div class="two-story-vote has-likerts-{{voice3_hasLikert}}">
+    {{label}}:
+    <button class="vote-likert" data-answer="yes" data-voice="voice3">Yes</button>
+    <button class="vote-likert" data-answer="kinda" data-voice="voice3">Kinda</button>
+    <button class="vote-likert" data-answer="no" data-voice="voice3">No   </button>
+  </div>
+  </div>
+</template>
+
+<!--
+<template name="twoStoryLikert">
+   {{#each voice1_likerts}}
+    <div class="voice1-tag">
+      {{answer}}  <button class="remove-likert"> X </button>
+    </div>
+  {{/each}}
+  
+  <div class="two-story-vote has-likerts-{{hasLikert}}">
+    Two-Stories:
+    <button class="vote-button" data-answer="yes" data-voice="voice1">Yes</button>
+    <button class="vote-button" data-answer="kinda" data-voice="voice1">Kinda</button>
+    <button class="vote-button" data-answer="no" data-voice="voice1">No   </button>
+  </div>
+</template>
+-->
 <template name="article">
   <div class="row">
     <div class="col-md-8">
@@ -76,12 +143,17 @@
         </div>
       </div>
       <div class="col-md-8">
-        
+        {{#each likerts}}
+          {{> likertView1}}
+        {{/each}}
+         <!--
+           {{> twoStoryLikert}}
          {{#each voice1_likerts}}
           <div class="voice1-tag">
             {{answer}}  <button class="remove-likert"> X </button>
           </div>
         {{/each}}
+        
         <div class="two-story-vote has-likerts-{{hasLikert}}">
           Two-Stories:
           <button class="vote-button" data-answer="yes" data-voice="voice1">Yes</button>
@@ -89,12 +161,8 @@
           <button class="vote-button" data-answer="no" data-voice="voice1">No   </button>
         </div>
         
-        <!--
-        {{#each voice1_tags}}
-          <div class="voice1-tag">
-            {{tag}}
-          </div>
-        {{/each}}
+       
+
         -->
         
         {{#each voice1_comments}}
@@ -121,6 +189,11 @@
           </div>
       </div>
       <div class="col-md-8">
+        {{#each likerts}}
+          {{> likertView2}}
+        {{/each}}
+        
+        <!--
         {{#each voice2_likerts}}
           <div class="voice2-tag">
             {{answer}} <button class="remove-likert"> X </button>
@@ -132,7 +205,7 @@
           <button class="vote-button" data-answer="kinda" data-voice="voice2">Kinda</button>
           <button class="vote-button" data-answer="no" data-voice="voice2">No   </button>
         </div>
-        <!--
+        
         {{#each voice2_tags}}
           <div class="voice2-tag">
             {{tag}}
@@ -165,6 +238,10 @@
           </div>
       </div>
       <div class="col-md-8">
+        {{#each likerts}}
+          {{> likertView3}}
+        {{/each}}
+        <!--
         {{#each voice3_likerts}}
           <div class="voice3-tag">
             {{answer}} <button class="remove-likert"> X </button>
@@ -176,7 +253,7 @@
           <button class="vote-button" data-answer="kinda" data-voice="voice3">Kinda</button>
           <button class="vote-button" data-answer="no" data-voice="voice3">No   </button>
         </div>
-        <!--
+        
         
         {{#each voice3_tags}}
           <div class="voice3-tag">

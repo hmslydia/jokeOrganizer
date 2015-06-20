@@ -207,7 +207,7 @@ Template.articleDiv.helpers({
       
       //GOAL QUERY #2
       
-      if(queryGoalType == "likert-two-stories"){  
+      else if(queryGoalType == "likert-two-stories"){  
         showAllVoices = false
         var query = {}
         if (queryGoalSubtype == "yes"){
@@ -272,7 +272,82 @@ Template.articleDiv.helpers({
             selectedArticleVoices[article_id] = [voice] 
           }        
         })
-      } 
+      }
+      else /* all other goal types */{  
+        showAllVoices = false
+        var query = {}
+        console.log(queryGoalType)
+        var likert_label = queryGoalType.slice(7) //"likert-two-stories"
+        if (queryGoalSubtype == "yes"){
+          query["likert_"+likert_label+"_counts.yes"] = {$gt:0} 
+        }
+        if (queryGoalSubtype == "no"){
+          query["likert_"+likert_label+"_counts.no"] = {$gt:0} 
+        }
+        if (queryGoalSubtype == "kinda"){
+          query["likert_"+likert_label+"_counts.kinda"] = {$gt:0} 
+        }
+        if (queryGoalSubtype == "notDone"){
+          temp1 = {}
+          temp1["likert_"+likert_label+"_counts.yes"] = 0
+          
+          temp2 = {}
+          temp2["likert_"+likert_label+"_counts.no"] = 0
+          
+          temp3 = {}
+          temp3["likert_"+likert_label+"_counts.kinda"] = 0
+          
+          tempArray = [temp1, temp2, temp3]
+          query = {$and: tempArray}
+        }
+        
+        var voicesObjs = Voices.find(query).fetch()
+        var article_id_set = _.pluck(voicesObjs, "article_id")
+        
+        //make ranking function
+        article_id_set_scores = {}
+        //instantiate the scores to zero
+        _.each(article_id_set, function(article_id){
+          article_id_set_scores[article_id] = 0
+        })
+        _.each(voicesObjs, function(voiceObj){
+          var article_id = voiceObj.article_id
+          var score_inc = 0
+          //based on the subquery, increment the score:
+          if (queryGoalSubtype == "yes"){
+            score_inc += voiceObj["likert_"+likert_label+"_counts"].yes
+          }
+          if (queryGoalSubtype == "no"){
+            score_inc += voiceObj["likert_"+likert_label+"_counts"].no
+          }
+          if (queryGoalSubtype == "kinda"){
+            score_inc += voiceObj["likert_"+likert_label+"_counts"].kinda
+          }
+          if (queryGoalSubtype == "notDone"){
+            //do nothing, they are all equally notDone
+          }          
+          
+          article_id_set_scores[article_id] = article_id_set_scores[article_id] + score_inc
+        })       
+        var articleIds = _.unique(article_id_set)
+        var articles_query = { _id: { $in: articleIds } }
+        articles = Articles.find(articles_query).fetch()
+        
+        //SORT BY MOST YES / NO / KINDA
+        articles = _.sortBy(articles, function(article){  return article_id_set_scores[article._id] * -1 })
+        
+        
+        _.each(voicesObjs, function(voicesObj){
+          var article_id = voicesObj.article_id
+          var voice = voicesObj.voice_number
+          if(selectedArticleVoices.hasOwnProperty(article_id)){
+            selectedArticleVoices[article_id].push(voice)
+          }else{
+            selectedArticleVoices[article_id] = [voice] 
+          }        
+        })
+      }
+       
     }
     
     //STEP 2. FOR EACH ARTICLE, PUT ALL THE JOIN dATA ON IN (comments, likerts, etc)
@@ -298,13 +373,67 @@ Template.articleDiv.helpers({
       articleObj.voice3_comments = _.filter(articleComments, function(obj){ return obj.field == "voice3"})
       
       
+      var likert_labels = ["two-stories", "entityMatch"]
+      articleObj.likerts = []
+      
+      _.each(likert_labels, function(label){
+        var articleLikerts = LikertApplications.find({article_id: article_id, label: label, removed: false}).fetch() 
+        
+        var voice1_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice1"})
+        var voice2_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice2"})
+        var voice3_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice3"})
+        
+        var likertObj = {
+          label: label,
+          article_id: article_id,
+          voice1_likerts: voice1_likerts,
+          voice2_likerts: voice2_likerts,
+          voice3_likerts: voice3_likerts,
+                  
+          voice1_hasLikert: ((voice1_likerts.length == 0) ?  "false" : "true"),
+          voice2_hasLikert: ((voice2_likerts.length == 0) ?  "false" : "true"),
+          voice3_hasLikert: ((voice3_likerts.length == 0) ?  "false" : "true"),
+        }        
+        articleObj.likerts.push(likertObj)
+      })
+      
       //ADD LIKERTS
+      /*
       var articleLikerts = LikertApplications.find({article_id: article_id, removed: false}).fetch() 
-      articleObj.voice1_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice1"})
-      articleObj.voice2_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice2"})
-      articleObj.voice3_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice3"})
-      var hasLikert = (articleLikerts.length == 0) ?  "false" : "true"
-      articleObj.hasLikert = hasLikert 
+      
+      var voice1_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice1"})
+      var voice2_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice2"})
+      var voice3_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice3"})
+      
+      var likertObj1 = {
+        label: "two-story",
+        article_id: article_id,
+        voice1_likerts: voice1_likerts,
+        voice2_likerts: voice2_likerts,
+        voice3_likerts: voice3_likerts,
+                
+        voice1_hasLikert: ((voice1_likerts.length == 0) ?  "false" : "true"),
+        voice2_hasLikert: ((voice2_likerts.length == 0) ?  "false" : "true"),
+        voice3_hasLikert: ((voice3_likerts.length == 0) ?  "false" : "true"),
+      }
+
+      var likertObj2 = {
+        label: "foop",
+        article_id: article_id,
+        voice1_likerts: voice1_likerts,
+        voice2_likerts: voice2_likerts,
+        voice3_likerts: voice3_likerts,
+                
+        voice1_hasLikert: ((voice1_likerts.length == 0) ?  "false" : "true"),
+        voice2_hasLikert: ((voice2_likerts.length == 0) ?  "false" : "true"),
+        voice3_hasLikert: ((voice3_likerts.length == 0) ?  "false" : "true"),
+      }
+            
+      articleObj.likerts = [likertObj1, likertObj2]
+      
+      */
+      
+      
       
       if(showAllVoices){
         articleObj.voice1_show = "true" //selectedArticleVoices[article_id]["voice1"] "true"/"false"
@@ -424,12 +553,12 @@ Template.article.events({
   },
   
   //Likert Voting submission
-  'click .vote-button' : function(event){
+  'click .vote-likert' : function(event){
     
     var answer = $(event.currentTarget).data('answer')
     var voice = $(event.currentTarget).data('voice')    
-    var article_id = this._id
-    var label = "two-stories"
+    var article_id = this.article_id
+    var label = this.label //"two-stories"
     
     var params = {
       article_id: article_id,
@@ -437,13 +566,18 @@ Template.article.events({
       label: label, //"two-stories"
       answer: answer //"yes"        
     }
+    console.log(params)
+    
     Meteor.call("addLikert", params, function(){
       //no callback
     })
+    
   },
   
   'click .remove-likert' : function(event){        
     var params = this
+    console.log(params)
+    
     Meteor.call("removeLikert", params, function(){
       //no callback
     })
