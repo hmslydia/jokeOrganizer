@@ -7,7 +7,10 @@
 </template>
 
 <template name="tag">
+  {{#if nonzero counts}}
   <div class="sidebar-tag">
     {{tag}} ({{counts}})
   </div>
+  
+  {{/if}}
 </template>

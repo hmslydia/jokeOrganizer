@@ -48,3 +48,7 @@
 .has-likerts-true{  
   opacity: 0.5;
 }
+
+.sidebar-tag{
+  cursor: pointer
+}

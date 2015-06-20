@@ -1,6 +1,10 @@
  UI.registerHelper('equals', function (a, b) {
       return a === b;
     });
+    
+  UI.registerHelper('nonzero', function (a) {
+      return a != 0;
+    });   
 
 Template.queryFeedback.helpers({
   queryFeedbackText : function() {
@@ -44,6 +48,7 @@ Template.articleDiv.helpers({
   articles : function(){
     var queryType = Session.get('queryType')
     var queryTagId = Session.get('queryTagId')
+    var queryTagText = Session.get('queryTagText')
     var queryText = Session.get('queryText')
     var queryGoalType = Session.get('queryGoalType')
     var queryGoalSubtype = Session.get('queryGoalSubtype')
@@ -61,8 +66,25 @@ Template.articleDiv.helpers({
       articles = Articles.find().fetch()
     
     } else if (queryType == "tag"){
-      var articleIds = _.unique(_.pluck(TagApplications.find({tag_id: queryTagId}).fetch(), "article_id"))
-      articles = Articles.find({_id: { $in: articleIds }}).fetch()
+      showAllVoices = false
+      var allTagApplications = TagApplications.find({tag_id: queryTagId}).fetch()
+      var articleIds = _.unique(_.pluck(allTagApplications, "article_id"))
+      articles = Articles.find({_id: { $in: articleIds }}).fetch()  
+      console.log(queryTagText)  
+      
+      
+      
+      _.each(allTagApplications, function(tagApplicationObj){
+        var article_id = tagApplicationObj.article_id
+        var field = tagApplicationObj.field
+        if(selectedArticleVoices.hasOwnProperty(article_id)){
+          selectedArticleVoices[article_id].push(field)
+        }else{
+          selectedArticleVoices[article_id] = [field] 
+        }        
+      })
+    
+    
     
     } else if (queryType == "text"){
       //we are going to be using selectedArticleVoices to tell which voices to display
@@ -112,8 +134,6 @@ Template.articleDiv.helpers({
       var voice3_articles = Articles.find({voice3: regex}).fetch()
       
       _.each(voice1_articles, function(voice1_article){
-        console.log("voice1_article")
-        console.log(voice1_article)
         var article_id = voice1_article._id
         if(selectedArticleVoices.hasOwnProperty(article_id)){
           selectedArticleVoices[article_id].push("voice1")
@@ -188,7 +208,6 @@ Template.articleDiv.helpers({
       //GOAL QUERY #2
       
       if(queryGoalType == "likert-two-stories"){  
-        console.log("likert goal")
         showAllVoices = false
         var query = {}
         if (queryGoalSubtype == "yes"){
@@ -211,9 +230,38 @@ Template.articleDiv.helpers({
         var voicesObjs = Voices.find(query).fetch()
         var article_id_set = _.pluck(voicesObjs, "article_id")
         
+        //make ranking function
+        article_id_set_scores = {}
+        //instantiate the scores to zero
+        _.each(article_id_set, function(article_id){
+          article_id_set_scores[article_id] = 0
+        })
+        _.each(voicesObjs, function(voiceObj){
+          var article_id = voiceObj.article_id
+          var score_inc = 0
+          //based on the subquery, increment the score:
+          if (queryGoalSubtype == "yes"){
+            score_inc += voiceObj.likert_two_stories_counts.yes
+          }
+          if (queryGoalSubtype == "no"){
+            score_inc += voiceObj.likert_two_stories_counts.no
+          }
+          if (queryGoalSubtype == "kinda"){
+            score_inc += voiceObj.likert_two_stories_counts.kinda
+          }
+          if (queryGoalSubtype == "notDone"){
+            //do nothing, they are all equally notDone
+          }          
+          
+          article_id_set_scores[article_id] = article_id_set_scores[article_id] + score_inc
+        })       
         var articleIds = _.unique(article_id_set)
         var articles_query = { _id: { $in: articleIds } }
         articles = Articles.find(articles_query).fetch()
+        
+        //SORT BY MOST YES / NO / KINDA
+        articles = _.sortBy(articles, function(article){  return article_id_set_scores[article._id] * -1 })
+        
         
         _.each(voicesObjs, function(voicesObj){
           var article_id = voicesObj.article_id
@@ -238,6 +286,10 @@ Template.articleDiv.helpers({
       var articleComments = Comments.find({article_id: article_id, removed: false}).fetch() 
       if(queryType == "text"){
         articleComments =      highlightSearchTermInComments(articleComments, queryText)
+      }
+      
+      if(queryType == "tag"){
+        articleComments =      highlightSearchTermInComments(articleComments, queryTagText)
       }
       articleObj.headline_comments = _.filter(articleComments, function(obj){ return obj.field == "headline"})
       articleObj.description_comments = _.filter(articleComments, function(obj){ return obj.field == "description"})
@@ -294,8 +346,10 @@ boldPhrase = function(txt, phrase){
 }
 
 highlightSearchTermInArticles = function(articles, queryText){
+  console.log('highlight: '+queryText)
   for( var i = 0; i < articles.length; i++){
     var articleObj = articles[i]
+    
     articleObj.headline = boldPhrase(articleObj.headline, queryText)
     articleObj.description = boldPhrase(articleObj.description, queryText)
     articleObj.voice1 = boldPhrase(articleObj.voice1, queryText)

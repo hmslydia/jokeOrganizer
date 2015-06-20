@@ -147,20 +147,23 @@ addLikert = function(params){
   var is_first_no = false
   var is_first_kinda = false
   
+  var likert_label = params.label //"two-stories" , ah ,so it's in the label like this. should I change it here? maybe so.
+  if(likert_label == "two-stories") {likert_label = "two_stories"}
   
   var inc = {}
   if (params.answer == "yes"){
-    //right here I could check if the current count is zero
-    is_first_yes = (voiceObj.likert_two_stories_counts.yes == 0) 
-    inc["likert_two_stories_counts.yes"] = 1
+    
+    is_first_yes = (voiceObj["likert_"+likert_label+"_counts"].yes == 0) 
+    inc["likert_"+likert_label+"_counts.yes"] = 1
+    console.log("incremented yes")
   }
   if (params.answer == "no"){
-    is_first_no = (voiceObj.likert_two_stories_counts.no == 0) 
-    inc["likert_two_stories_counts.no"] = 1
+    is_first_no = (voiceObj["likert_"+likert_label+"_counts"].no == 0) 
+    inc["likert_"+likert_label+"_counts.no"] = 1
   }
   if (params.answer == "kinda"){
-    is_first_kinda = (voiceObj.likert_two_stories_counts.kinda == 0) 
-    inc["likert_two_stories_counts.kinda"] = 1
+    is_first_kinda = (voiceObj["likert_"+likert_label+"_counts"].kinda == 0) 
+    inc["likert_"+likert_label+"_counts.kinda"] = 1
   }
 
   Voices.update(
@@ -179,14 +182,19 @@ addLikert = function(params){
   if (is_first_kinda){
     inc["count_kinda"] = 1
   }
+  
+  var label = params.label
+  if(label == "two_stories") {label = "two-stories"} // do this step because I stoopidly label this is the collections
+  //likert_label "two_stories in Voices and two-stores in Likert
   Likerts.update(
-    {label: "two-stories"}, 
-      {$inc: inc }
+    {label: label}, 
+    {$inc: inc }
   )
   
 }
 
 removeLikert = function(params){
+  
   // mark as removed in LikertApplications
   var id = params._id
   LikertApplications.update(
@@ -209,20 +217,22 @@ removeLikert = function(params){
   var is_first_no = false
   var is_first_kinda = false
   
+  var likert_label = params.label
+  if(likert_label == "two-stories") {likert_label = "two_stories"}
   
   var inc1 = {}
   if (params.answer == "yes"){
     //right here I could check if the current count is zero
-    is_first_yes = (voiceObj.likert_two_stories_counts.yes == 1) 
-    inc1["likert_two_stories_counts.yes"] = -1
+    is_first_yes = (voiceObj["likert_"+likert_label+"_counts"].yes == 1) 
+    inc1["likert_"+likert_label+"_counts.yes"] = -1
   }
   if (params.answer == "no"){
-    is_first_no = (voiceObj.likert_two_stories_counts.no == 1) 
-    inc1["likert_two_stories_counts.no"] = -1
+    is_first_no = (voiceObj["likert_"+likert_label+"_counts"].no == 1) 
+    inc1["likert_"+likert_label+"_counts.no"] = -1
   }
   if (params.answer == "kinda"){
-    is_first_kinda = (voiceObj.likert_two_stories_counts.kinda == 1) 
-    inc1["likert_two_stories_counts.kinda"] = -1
+    is_first_kinda = (voiceObj["likert_"+likert_label+"_counts"].kinda == 1) 
+    inc1["likert_"+likert_label+"_counts.kinda"] = -1
   }
 
   Voices.update(
@@ -241,8 +251,12 @@ removeLikert = function(params){
   if (is_first_kinda){
     inc2["count_kinda"] = -1
   }
+  
+  var label = params.label
+  //if(label == "two_stories") {label = "two-stories"} // do this step because I stoopidly label this is the collections
+  //likert_label "two_stories in Voices and two-stores in Likert
   Likerts.update(
-    {label: "two-stories"}, 
+    {label: label}, 
       {$inc: inc2 }
   )
 
@@ -375,7 +389,6 @@ voice_number: //1, 2, or 3
 */
 
 addArticles = function(offset, numArticles){
-  console.log("add articles: ", numArticles)
     for (var i = offset; i < offset+numArticles; i++) {
       //insert into Articles
       var articleObj = voices[i]
@@ -425,6 +438,10 @@ addArticles = function(offset, numArticles){
 }
 
 Meteor.startup(function () {	
+
+  
+  
+  
   /*
   if(Articles.find().count() == 20){
   
@@ -436,6 +453,15 @@ Meteor.startup(function () {
       Articles.remove({_id: article_id})
     }
   
+    var redundant_voice_ids = ["3Yg4TLWtgc3ufGhtp", "uZ74YkYsthee2GzAx", "v49Txw3CgMoudeRnR", "oRydjBF7C37pF8eiP", "rEjhL65iMdAJvWJq7", "aWke9iuWfKQKcMm7z", "xi2e6q4vwgjyo4bf4", "SQS7G6LJjLWhX7gkL", "N6givq5pMMLE4bCic", "cFMANirbAQ4eALrjb", "7deDMTYgFhLcZoCwg", "o2hEH4yEAhKbbXAp7", "sMGepA6E8yMS7xY3Z", "4KtaCzHdnKkXvA9WK", "nHhoBnH3ZbCzvEFgn", "THmxKtKCSweRL5x7X", "agnuYSHxj4397wpgn", "YNEGpLNHTRpFHXxXe", "eTmH7tLZHxak3ruZ5", "7iKxXs2J7qEC7skrX", "DgXB7xpayCRzj9i38", "egHqkXNRWRTnb7XSy", "jQRamgoCnfMQ5nBSx", "SgW6smsHjqBuTiNsw", "4Menbg2zkmEFpwAkX", "n8eTqk7EBGb9rJNJT", "C8y7edxh7hPj8BHZr", "NbgXe9SG3gSobdKfW", "qXTPJisH7gDesWpAL", "TQ8Cs9TBrB4DBGTY9"]
+    
+    for(var i = 0; i< redundant_voice_ids.length; i++){
+      voice_id = redundant_voice_ids[i]
+      console.log(voice_id)
+      Voices.remove({_id: voice_id})
+    }  
+  
+  
   }
   if(Articles.find().count() == 10){
     
@@ -444,6 +470,8 @@ Meteor.startup(function () {
     addArticles(offset, numArticles)    
   }
   */
+  //addLikertResponse("entityMatch")
+  
   if (Articles.find().count() === 0) {
     var numArticles = 10 
     var offset = 0  

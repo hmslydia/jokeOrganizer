@@ -25,6 +25,9 @@ voice:
 voice_number: //1, 2, or 3
 likert_two_stories_counts.: {yes: 0, no:0, kinda:0}
 
+//WANT
+likert_counts["two_stories"] : {yes: 0, no:0, kinda:0}
+
 */
 
 TagCountsByObject = new Meteor.Collection('tagCountsByObject')
@@ -122,7 +125,7 @@ article_id: article_id,
 field: field, //headline, description, voice1, voice2, voice3
 
 answer: "yes","no","kinda" //"very funny! point of view?" 
-label: "Two-tone"   
+label: "two-stories"  
 
 removed: false / true
 removed_user_id:
