@@ -373,11 +373,15 @@ Template.articleDiv.helpers({
       articleObj.voice3_comments = _.filter(articleComments, function(obj){ return obj.field == "voice3"})
       
       
-      var likert_labels = ["two-stories", "entityMatch"]
+      var likert_labels = [/*"entityMatch",*/ "two-stories"] // ["entityMatch"] //["entityMatch", "two-stories"]
       articleObj.likerts = []
       
       _.each(likert_labels, function(label){
         var articleLikerts = LikertApplications.find({article_id: article_id, label: label, removed: false}).fetch() 
+        //var articleLikerts = LikertApplications.find({_id: "iuczrrKQ7G7Apa9ux", removed: false}).fetch() 
+        
+
+        
         
         var voice1_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice1"})
         var voice2_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice2"})
@@ -566,8 +570,6 @@ Template.article.events({
       label: label, //"two-stories"
       answer: answer //"yes"        
     }
-    console.log(params)
-    
     Meteor.call("addLikert", params, function(){
       //no callback
     })
@@ -576,8 +578,6 @@ Template.article.events({
   
   'click .remove-likert' : function(event){        
     var params = this
-    console.log(params)
-    
     Meteor.call("removeLikert", params, function(){
       //no callback
     })
@@ -585,7 +585,6 @@ Template.article.events({
   },
   
   'click .remove-comment' : function(event){
-    console.log(this)
     var params = this
     Meteor.call("removeComment", params, function(){
       //no callback

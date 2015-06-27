@@ -33,7 +33,7 @@
 </template>
 
 <template name="likertView1">
-  <div class="likertView">
+  <div class="likertView {{label}}">
     {{#each voice1_likerts}}
       <div class="voice1-tag">
         {{answer}}  <button class="remove-likert"> X </button>
@@ -50,7 +50,7 @@
 </template>
 
 <template name="likertView2">
-  <div class="likertView">
+  <div class="likertView {{label}}">
     {{#each voice2_likerts}}
       <div class="voice2-tag">
         {{answer}}  <button class="remove-likert"> X </button>
@@ -67,7 +67,7 @@
 </template>
 
 <template name="likertView3">
-  <div class="likertView">
+  <div class="likertView {{label}}">
    {{#each voice3_likerts}}
     <div class="voice3-tag">
       {{answer}}  <button class="remove-likert"> X </button>

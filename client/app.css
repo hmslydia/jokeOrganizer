@@ -53,8 +53,15 @@
   cursor: pointer
 }
 
-.likertView{
-  background:grey;
+.likertView.entityMatch{
+  background: yellow;
+  border: 1px solid black;
+  padding: 2px;
+  margin: 2px;
+}
+
+.likertView {
+  background:#cccccc;
   border: 1px solid black;
   padding: 2px;
   margin: 2px;
