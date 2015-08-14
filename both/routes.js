@@ -68,4 +68,31 @@ Router.map(function(){
       }
     }
   })
+  this.route('exportResults', { 
+    //path: '/exportResults',
+    path: "/exportResults/:queryType/:queryTagId/:queryTagText/:queryText/:queryGoalType/:queryGoalSubtype",
+    layoutTemplate: 'standardLayout',
+    yieldTemplates: {
+      'header': {to: 'header'}
+    },
+    waitOn: function(){         
+      return [Meteor.subscribe('comments'),     
+              Meteor.subscribe('articles'),
+              Meteor.subscribe('voices'),
+              Meteor.subscribe('likerts'),
+              Meteor.subscribe('tags'),
+              Meteor.subscribe('tagCountsByObject'),
+              Meteor.subscribe('tagApplications'),
+              Meteor.subscribe('likertApplications')]
+    },
+    data: function(){
+      console.log(this.params)
+      Session.set('queryType', this.params.queryType)
+      Session.set('queryTagId', this.params.queryTagId)
+      Session.set('queryTagText', this.params.queryTagText)
+      Session.set('queryText', this.params.queryText)
+      Session.set('queryGoalType', this.params.queryGoalType)
+      Session.set('queryGoalSubtype', this.params.queryGoalSubtype)
+      }
+  })
 })

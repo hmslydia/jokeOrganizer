@@ -1,0 +1,238 @@
+<template name="exportResults">
+  <div style="margin: 50px">
+    Results: {{numResults}}
+    
+    {{jsonResults}}
+    
+    
+    
+    <div id="articleDiv">
+    {{#each articles}}
+      {{> articleTable}}
+      <br>
+    {{/each}}
+    </div>
+  </div>
+</template>
+
+<template name="articleTable">
+  
+  <div class="voices-div" >
+
+    {{#if equals voice1_show "true"}}
+    <br>
+        #{{voice1_num}}
+        <table border="1">
+          <col width="300">
+          <col width="300">
+          <tr>
+            <td valign="top">
+              <div class="export-cell-container">
+                {{headline_id}}
+                <div class="noH1">
+                  {{{headline}}}
+                </div>
+                {{{description}}}
+              </div>
+            </td>
+            <td valign="top">
+              <br>
+              <div class="export-cell-container">
+                {{{voice1}}}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <br>
+              <div class="export-cell-container">
+                .
+              </div>
+            </td>
+            <td>
+              <br>
+              <div class="export-cell-container">
+                <div class="comments-for-export">
+                  {{#each voice1_comments}}
+                    <div class='voice1-comment voice-comment '>
+                      {{{text}}} 
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>          
+          
+        <!--
+        <div class="row">
+          <div class="col-md-4">
+            <div class="voice-container">
+              
+            </div>
+          </div>
+          
+          <div class="col-md-8">
+            {{#each likerts}}
+              {{> likertView1}}
+            {{/each}}
+    
+            
+            {{#each voice1_comments}}
+              <div class='voice1-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
+                {{{text}}} <button class="remove-comment"> X </button>
+              </div>
+            {{/each}}
+            <textarea class="add-voice1-comment add-voice-comment" data-field="voice1"></textarea>
+            <button class="addComment" data-field="voice1">+</button>
+          </div>
+          
+          
+        </div>
+        -->
+
+    {{/if}}
+  
+    <!-- 
+      
+      VOICE 2
+      
+    -->  
+    {{#if equals voice2_show "true"}}
+        <br>
+        #{{voice2_num}}
+          <table border="1">
+            <col width="300">
+            <col width="300">
+            <tr>
+              <td valign="top">
+                <div class="export-cell-container">
+                  {{headline_id}}
+                  <div class="noH1">
+                    {{{headline}}}
+                  </div>
+                  {{{description}}}
+                </div>
+              </td>
+              <td valign="top">
+              <div class="export-cell-container">
+                <br>
+                {{{voice2}}}
+              </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+              </td>
+              <td>
+              <br>
+              <div class="export-cell-container">
+                <div class="comments-for-export">
+                  {{#each voice2_comments}}
+                    <div class='voice2-comment voice-comment '>
+                      {{{text}}} 
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            </td>
+            </tr>
+          </table>  
+   
+    <!--
+    <div class="row">
+      <div class="col-md-4">
+          <div class="voice-container">
+            {{{voice2}}}
+          </div>
+      </div>
+      <div class="col-md-8">
+        {{#each likerts}}
+          {{> likertView2}}
+        {{/each}}
+
+        {{#each voice2_comments}}
+          <div class='voice2-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
+            
+            {{{text}}}<button class="remove-comment"> X </button>
+          </div>
+        {{/each}}
+        <textarea class="add-voice2-comment add-voice-comment" data-field="voice2"></textarea>
+        <button class="addComment" data-field="voice2">+</button>
+      </div>
+    </div>
+    -->
+    {{/if}}
+  
+    <!-- 
+      
+      VOICE 3
+      
+    -->  
+    {{#if equals voice3_show "true"}} 
+    <br>
+#{{voice3_num}}
+        <table border="1">
+          <col width="300">
+          <col width="300">
+          <tr>
+            <td valign="top">
+              <div class="export-cell-container">
+                {{headline_id}}
+                <div class="noH1">
+                  {{{headline}}}
+                </div>
+                {{{description}}}
+              </div>
+            </td>
+            <td valign="top">
+              <div class="export-cell-container">
+                <br>
+                {{{voice3}}}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+            </td>
+            <td>
+              <br>
+              <div class="export-cell-container">
+                <div class="comments-for-export">
+                  {{#each voice3_comments}}
+                    <div class='voice3-comment voice-comment '>
+                      {{{text}}} 
+                    </div>
+                  {{/each}}
+                </div>
+              </div>
+            </td>
+          </tr>
+        </table>      
+  
+    <!--
+      <div class="row">
+        <div class="col-md-4">
+            <div class="voice-container">
+              {{{voice3}}}
+            </div>
+        </div>
+        <div class="col-md-8">
+          {{#each likerts}}
+            {{> likertView3}}
+          {{/each}}
+  
+          {{#each voice3_comments}}
+            <div class='voice3-comment voice-comment {{#if equals saturation "mid"}} desaturated {{/if}}'>
+              {{{text}}} <button class="remove-comment"> X </button>
+            </div>
+          {{/each}}
+          <textarea class="add-voice3-comment add-voice-comment" data-field="voice3"></textarea>
+          <button class="addComment" data-field="voice3">+</button>
+        </div>
+    
+      </div>
+      -->
+    {{/if}}
+  </div>
+</template>

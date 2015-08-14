@@ -1,6 +1,14 @@
+.headline-and-id-container{
+ margin-top: 20px; 
+}
+
 .headline-container{
   font-weight: bold;
   font-size: 18px;
+}
+
+.headline-container h1{
+  margin-top: 0px;
 }
 
 .voice-container{

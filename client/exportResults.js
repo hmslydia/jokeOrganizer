@@ -1,74 +1,17 @@
- UI.registerHelper('equals', function (a, b) {
-      return a === b;
-    });
-    
-  UI.registerHelper('nonzero', function (a) {
-      return a != 0;
-    });   
+Template.exportResults.helpers({
+  numResults: function(){
+    return Session.get('numResults')
+  },
 
-Template.queryFeedback.helpers({
-  queryFeedbackText : function() {
-    var queryType = Session.get('queryType')
-    
-    var queryTagText = Session.get('queryTagText')
-    var queryTagId = Session.get('queryTagId')
-    var queryText = Session.get('queryText')
-    var queryGoalType = Session.get('queryGoalType')
-    var queryGoalSubtype = Session.get('queryGoalSubtype')
-    var numResults = Session.get('numResults') || "Lots of"
-    
-    if( !queryType ){
-      return numResults+ " results"
-    } else if (queryType == "all"){
-      return numResults+ " results for all articles"
-    } else if (queryType == "tag"){
-      return numResults+ " results for tag '"+queryTagText+"'"
-    } else if (queryType == "text"){
-      return numResults+ " results for '"+queryText+"'"
-    } else if (queryType == "goal"){
-      return numResults+ " results for '"+queryGoalType+"': '"+queryGoalSubtype+"'"
-    }
-
-  }
-})
-
-Template.queryFeedback.events({
-  'click #exportResults': function(){
-    //open a new page with the results of this query in a different format.
-    
-    var  queryType = Session.get('queryType')
-    var  queryTagId = Session.get('queryTagId')
-    var  queryTagText = Session.get('queryTagText')
-    var  queryText = Session.get('queryText')
-    var  queryGoalType = Session.get('queryGoalType')
-    var  queryGoalSubtype= Session.get('queryGoalSubtype')
-    
-    
-    var url = Router.url('home')+"exportResults/"+queryType+"/"+queryTagId+"/"+queryTagText+"/"+queryText+"/"+queryGoalType+"/"+queryGoalSubtype
-    
-    window.open(url, '_blank');
-  }
-})
-
-/*
-A query determines which articles should be shown.
-The default query is for "all" the articles
-
-A tag, text, or goal option can trigger a new query.
-
-There are two steps to:
-1. Find the articles
-2. Put extra information on it from joins with Comments, (Tags), Likerts.
-
-*/
-Template.articleDiv.helpers({
   articles : function(){
+    
     var queryType = Session.get('queryType')
     var queryTagId = Session.get('queryTagId')
     var queryTagText = Session.get('queryTagText')
     var queryText = Session.get('queryText')
     var queryGoalType = Session.get('queryGoalType')
     var queryGoalSubtype = Session.get('queryGoalSubtype')
+    
     
     var articles = []
     //var voices = []
@@ -470,142 +413,152 @@ Template.articleDiv.helpers({
     //count visible voices in articlesObj
     var numVisibleVoices = 0
     _.each(articles, function(articleObj){
-      if(articleObj.voice1_show == "true"){ numVisibleVoices++ }
-      if(articleObj.voice2_show == "true"){ numVisibleVoices++ }
-      if(articleObj.voice3_show == "true"){ numVisibleVoices++ }
+      articleObj.numVisibleVoices = numVisibleVoices
+      if(articleObj.voice1_show == "true"){ 
+        numVisibleVoices++ 
+        articleObj.voice1_num = numVisibleVoices
+      }
+      if(articleObj.voice2_show == "true"){ 
+        numVisibleVoices++ 
+        articleObj.voice2_num = numVisibleVoices
+      }
+      if(articleObj.voice3_show == "true"){ 
+        numVisibleVoices++ 
+        articleObj.voice3_num = numVisibleVoices
+      }
     })
     
     //Session.set('numResults', articles.length)
     Session.set('numResults', numVisibleVoices)
+    
+    function stripH1(headline){
+      if( headline.substr(0,4) == "<h1>"){
+        headline = headline.substring(4)
+      }
+      if( headline.substr(headline.length - 5) == "</h1>"){
+        headline = headline.substring(0, headline.length - 5)
+      }
+      return headline 
+    }
+    function stripP(headline){
+      if( headline.substr(0,3) == "<p>"){
+        headline = headline.substring(3)
+      }
+      if( headline.substr(headline.length - 4) == "</p>"){
+        headline = headline.substring(0, headline.length - 4)
+      }
+      return headline 
+    }
+    function stripPquote(headline){
+      if( headline.substr(0,3) == "<p>"){
+        headline = headline.substring(3)
+      }
+      if( headline.substr(headline.length - 4) == "</p>"){
+        headline = headline.substring(0, headline.length - 4)
+      }
+      return headline 
+    }    
+    
+    var pp = []
+    _.each(articles, function(article){
+      if( article.voice1_show == "true"){
+        var thisVoiceObj = {
+          exampleTemplate: "differentReason",
+          headline: stripH1(article.headline),
+          headlineAnnotated: stripH1(article.headline),
+          headlineId: article.headline_id,
+          description: stripP(article.description),
+          descriptionAnnotated: stripP(article.description),
+          voice: stripP(article.voice1),
+          voice_img: "voice1md2.jpg",
+          annotation1: "", 
+          annotation2: "", 
+          annotation3: "", 
+          annotation4: "",
+          connections: [
+            {
+              label: "",
+              headlineAspect: "<span class='focusPoint'></span>",
+              jokeAspect: "<br><span class='focusPoint2'></span>"
+            },
+            {
+              label: "",
+              headlineAspect: "<span class='focusPoint'></span>",
+              jokeAspect: "<br><span class='focusPoint2'></span>"
+            }                
+          ],          
+        }
+        pp.push(thisVoiceObj)
+      }
+      if( article.voice2_show == "true"){
+        var thisVoiceObj = {
+          exampleTemplate: "differentReason",
+          headline: stripH1(article.headline),
+          headlineAnnotated: stripH1(article.headline),
+          headlineId: article.headline_id,
+          description: stripP(article.description),
+          descriptionAnnotated: stripP(article.description),
+          voice: stripP(article.voice2),
+          voice_img: "voice2md2.jpg",
+          annotation1: "", 
+          annotation2: "", 
+          annotation3: "", 
+          annotation4: "",
+          connections: [
+            {
+              label: "",
+              headlineAspect: "<span class='focusPoint'></span>",
+              jokeAspect: "<br><span class='focusPoint2'></span>"
+            },
+            {
+              label: "",
+              headlineAspect: "<span class='focusPoint'></span>",
+              jokeAspect: "<br><span class='focusPoint2'></span>"
+            }                
+          ], 
+          
+        }
+        pp.push(thisVoiceObj)
+      }
+      if( article.voice3_show == "true"){
+        var thisVoiceObj = {
+          exampleTemplate: "differentReason",
+          headline: stripH1(article.headline),
+          headlineAnnotated: stripH1(article.headline),
+          headlineId: article.headline_id,
+          description: stripP(article.description),
+          descriptionAnnotated: stripP(article.description),
+          voice: stripP(article.voice3),
+          voice_img: "voice3md2.jpg",
+          annotation1: "", 
+          annotation2: "", 
+          annotation3: "", 
+          annotation4: "", 
+          connections: [
+            {
+              label: "",
+              headlineAspect: "<span class='focusPoint'></span>",
+              jokeAspect: "<br><span class='focusPoint2'></span>"
+            },
+            {
+              label: "",
+              headlineAspect: "<span class='focusPoint'></span>",
+              jokeAspect: "<br><span class='focusPoint2'></span>"
+            }                
+          ], 
+          
+        }
+        pp.push(thisVoiceObj)
+      }      
+    })
+    console.log(JSON.stringify(pp))
+    console.log(articles)
     return articles
-
+    
+    
   },
 
 
 
 
 })
-
-boldPhrase = function(txt, phrase){
-  var re = new RegExp( "(<>)|("+phrase+")" ,"ig");
-  //var re = new RegExp( "("+phrase+")" ,"ig");
-  txt = txt.replace (re, function (m0, tag, ch) {
-     return tag || ('<b><span class="highlightTerm">' + ch + '</span></b>');
-  });
-  return txt
-}
-
-highlightSearchTermInArticles = function(articles, queryText){
-  console.log('highlight: '+queryText)
-  for( var i = 0; i < articles.length; i++){
-    var articleObj = articles[i]
-    
-    articleObj.headline = boldPhrase(articleObj.headline, queryText)
-    articleObj.description = boldPhrase(articleObj.description, queryText)
-    articleObj.voice1 = boldPhrase(articleObj.voice1, queryText)
-    articleObj.voice2 = boldPhrase(articleObj.voice2, queryText)
-    articleObj.voice3 = boldPhrase(articleObj.voice3, queryText)
-  }
-  return articles
-}
-
-highlightSearchTermInComments = function(comments, queryText){
-  for( var i = 0; i < comments.length; i++){
-    var commentObj = comments[i]
-    
-    commentObj.text = boldPhrase(commentObj.text, queryText)
-  }
-  return comments
-}
-
-Template.article.events({
-  'click .addComment ': function(event){
-      var article_id = this._id
-      var field =  $(event.target).data("field") 
-      var text = $(event.target).prev("textarea").val()
-      console.log(text)
-      
-      var params = {
-        article_id: article_id,
-        field: field,
-        text: text        
-      }
-      Meteor.call("addCommentOrTag", params, function(){
-        //no callback
-      })
-      //clear
-      $(event.target).prev("textarea").val("")
-  },
-  'keypress .add-voice-comment ': function(event){
-     if (event.charCode == 13) {
-      var article_id = this._id
-      var field =  $(event.target).data("field") 
-      var text = $(event.target).val()
-      
-      
-      var params = {
-        article_id: article_id,
-        field: field,
-        text: text        
-      }
-      Meteor.call("addCommentOrTag", params, function(){
-        //no callback
-      })
-      //clear
-      
-      $(event.target).val("")
-      
-      event.preventDefault()
-    }
-  },
-  'click .show-voices' : function(event){
-    //console.log($(event.target).prev(".voices-div"))
-    
-    $(event.target).prev(".voices-div").show()
-    $(event.target).next(".hide-voices").show()
-    $(event.target).hide()
-  },
-  'click .hide-voices' : function(event){
-    //console.log($(event.target).prev("div.voices-div").hide()) //why didn't this work?
-    
-    $(event.target).prev().prev().hide()
-    $(event.target).prev(".show-voices").show()
-    $(event.target).hide()
-  },
-  
-  //Likert Voting submission
-  'click .vote-likert' : function(event){
-    
-    var answer = $(event.currentTarget).data('answer')
-    var voice = $(event.currentTarget).data('voice')    
-    var article_id = this.article_id
-    var label = this.label //"two-stories"
-    
-    var params = {
-      article_id: article_id,
-      field: voice, //"voice1"
-      label: label, //"two-stories"
-      answer: answer //"yes"        
-    }
-    Meteor.call("addLikert", params, function(){
-      //no callback
-    })
-    
-  },
-  
-  'click .remove-likert' : function(event){        
-    var params = this
-    Meteor.call("removeLikert", params, function(){
-      //no callback
-    })
-    
-  },
-  
-  'click .remove-comment' : function(event){
-    var params = this
-    Meteor.call("removeComment", params, function(){
-      //no callback
-    })
-  }
-})
-

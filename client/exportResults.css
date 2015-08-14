@@ -1,0 +1,13 @@
+.export-cell-container{
+  margin: 10px;
+}
+
+.noH1 h1{
+  font-weight: normal;
+  font-size: small;
+  margin: 10px 0px 10px 0px;
+}
+
+.comments-for-export{
+  color: lightgrey;
+}
