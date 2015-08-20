@@ -1,3 +1,6 @@
+/*
+  Repurposed as Sarcasm Goal
+  */
 Template.insultGoal.helpers({
   tally : function(){
     var numTotal = Articles.find().count() * 3
@@ -63,6 +66,9 @@ Template.insultGoal.events({
   }
 })
 
+/*
+  Inconsistent Stories Goal
+  */
 
 Template.twoStoryGoal.helpers({
   tally : function(){
@@ -122,6 +128,11 @@ Template.twoStoryGoal.events({
    )
    }
 })
+
+/*
+  Repurposed for Sarcasm
+  */
+
 
 Template.entityMatchGoal.helpers({
   tally : function(){

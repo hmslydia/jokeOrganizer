@@ -63,7 +63,7 @@ There are two steps to:
 */
 Template.articleDiv.helpers({
   articles : function(){
-    var queryType = Session.get('queryType')
+    var queryType = "special" //Session.get('queryType')
     var queryTagId = Session.get('queryTagId')
     var queryTagText = Session.get('queryTagText')
     var queryText = Session.get('queryText')
@@ -80,28 +80,31 @@ Template.articleDiv.helpers({
       articles = Articles.find().fetch()
     
     } else if (queryType == "all"){
-      articles = Articles.find().fetch()
+      articles = Articles.find().fetch().slice(20,40)
     
+    } else if (queryType == "special"){
+      console.log("special query")
+      showAllVoices = false
+      
+      var sarcasmResults = tagQuery("Q8u6zf3g6h32eJS6b", "#sarcasm")
+      var notSarcasm = notQuery(sarcasmResults[0], sarcasmResults[1])
+      //var notSarcasmArticles = notSarcasm[0]
+      //var notSarcasmSelectedArticleVoices = notSarcasm[1]  
+      
+      var notTwoStories = notGoalQuery()  
+      //var notTwoStoriesArticles = notTwoStories[0]
+      //selectedArticleVoices = notTwoStories[1] 
+      
+      var intersection = intersectionOfResults(notSarcasm[0], notSarcasm[1], notTwoStories[0], notTwoStories[1]) 
+      articles = intersection[0].slice(0,20)
+      selectedArticleVoices = intersection[1]
+      
+         
     } else if (queryType == "tag"){
       showAllVoices = false
-      var allTagApplications = TagApplications.find({tag_id: queryTagId}).fetch()
-      var articleIds = _.unique(_.pluck(allTagApplications, "article_id"))
-      articles = Articles.find({_id: { $in: articleIds }}).fetch()  
-      console.log(queryTagText)  
-      
-      
-      
-      _.each(allTagApplications, function(tagApplicationObj){
-        var article_id = tagApplicationObj.article_id
-        var field = tagApplicationObj.field
-        if(selectedArticleVoices.hasOwnProperty(article_id)){
-          selectedArticleVoices[article_id].push(field)
-        }else{
-          selectedArticleVoices[article_id] = [field] 
-        }        
-      })
-    
-    
+      tagQueryResults = tagQuery(queryTagId, queryTagText)
+      articles = tagQueryResults[0]
+      selectedArticleVoices = tagQueryResults[1]
     
     } else if (queryType == "text"){
       //we are going to be using selectedArticleVoices to tell which voices to display
@@ -126,10 +129,8 @@ Template.articleDiv.helpers({
             selectedArticleVoices[article_id] = {}
             selectedArticleVoices[article_id] = [field] 
           }
-        }
-      })
-      
-      
+        } 
+      })      
       
       //
       var query = { $or: [ 
@@ -390,15 +391,12 @@ Template.articleDiv.helpers({
       articleObj.voice3_comments = _.filter(articleComments, function(obj){ return obj.field == "voice3"})
       
       
-      var likert_labels = [/*"entityMatch",*/ "two-stories"] // ["entityMatch"] //["entityMatch", "two-stories"]
+      var likert_labels = ["entityMatch", "two-stories"] // ["entityMatch"] //["entityMatch", "two-stories"]
       articleObj.likerts = []
       
       _.each(likert_labels, function(label){
         var articleLikerts = LikertApplications.find({article_id: article_id, label: label, removed: false}).fetch() 
         //var articleLikerts = LikertApplications.find({_id: "iuczrrKQ7G7Apa9ux", removed: false}).fetch() 
-        
-
-        
         
         var voice1_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice1"})
         var voice2_likerts = _.filter(articleLikerts, function(obj){ return obj.field == "voice2"})
